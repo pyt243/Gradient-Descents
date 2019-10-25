@@ -30,8 +30,8 @@ def preprocess(path):
     Y = data['3'].values
     data = data.drop(['3'],axis=1)
     X = data.values
-    X = X[:][:10000]
-    Y = Y[:10000]
+    X = X[:][:100000]
+    Y = Y[:100000]
     X = np.array(X,dtype=np.float64)
     return X,Y,x_mean,y_mean,x_std,y_std
 

@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from preprocess import preprocess
-
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from math import sqrt
 
 class Grad_Desc:
 
@@ -24,7 +26,7 @@ class Grad_Desc:
         gd = 0.0
         for i in range(len(X)):
             gd = gd + (predictions[i] - Y[i])*X[i][index]
-        gd = gd/len(Y)
+        gd = gd#/len(Y)
         return gd
 
     def grad_desc(self,X,Y,theta):
@@ -37,10 +39,10 @@ class Grad_Desc:
                 predictions.append(np.dot(x,theta))
             for i in range(3):
                 theta[i] = theta[i] - self.lr*self.calc_gradient(X,Y,predictions,i)
-            if it%20 == 0:
+            if it%1 == 0:
                 itr_hist.append(it)
                 cost_hist.append(self.calc_cost(X,Y,theta))
-            if it%100 == 0:
+            if it%3 == 0:
                 print("Iteration :",it,"  Cost:",self.calc_cost(X,Y,theta))
         return theta, itr_hist, cost_hist
 
@@ -51,7 +53,12 @@ class Grad_Desc:
         print(theta)
         # print(X)
         ntheta, ith, coh = self.grad_desc(X,Y,theta)
+        predictions = []
+        for x in X:
+            predictions.append(np.dot(x,ntheta))
         print(ntheta)
+        print("RMSE: ",sqrt(mean_squared_error(Y, predictions)))
+        print("R2 Score: ",r2_score(Y,predictions))
         plt.plot(ith,coh)
         plt.xlabel("Iterations")
         plt.ylabel("Cost")
@@ -60,5 +67,5 @@ class Grad_Desc:
 
 
 if __name__ == "__main__":
-    gd = Grad_Desc(0.005,1500)
+    gd = Grad_Desc(0.000005,45)
     gd.get_coeff()

@@ -24,7 +24,7 @@ class L2_Reg:
         gd = 0.0
         for i in range(len(X)):
             gd = gd + (predictions[i] - Y[i])*X[i][index]
-        gd = (1/len(Y))*(gd+self.lmbd*theta[index])
+        gd = (gd+self.lmbd*theta[index])
         return gd
 
     def grad_desc(self,X,Y,theta):
@@ -37,10 +37,9 @@ class L2_Reg:
                 predictions.append(np.dot(x,theta))
             for i in range(3):
                 theta[i] = theta[i] - self.lr*self.calc_gradient(X,Y,predictions,theta,i)
-            if it%20 == 0:
-                itr_hist.append(it)
-                cost_hist.append(self.calc_cost(X,Y,theta))
-            if it%100 == 0:
+            itr_hist.append(it)
+            cost_hist.append(self.calc_cost(X,Y,theta))
+            if it%5 == 0:
                 print("Iteration :",it,"  Cost:",self.calc_cost(X,Y,theta))
         return theta, itr_hist, cost_hist
 
@@ -58,5 +57,5 @@ class L2_Reg:
         plt.show()
 
 if __name__ == "__main__":
-    l2r = L2_Reg(0.005,1000,0.1)
+    l2r = L2_Reg(0.000005,50,0.1)
     l2r.get_coeff()

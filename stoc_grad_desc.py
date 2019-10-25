@@ -29,11 +29,10 @@ class Stoc_Grad_Desc:
                 ind = np.random.randint(0,m)
                 pred = np.dot(X[ind],theta)
                 for t in range(3):
-                    theta[t] = theta[t] - self.lr*(1/m)*(pred-Y[ind])*X[ind][t]
-            if it%20 == 0:
-                itr_hist.append(it)
-                cost_hist.append(self.calc_cost(X,Y,theta))
-            if it%250 == 0:
+                    theta[t] = theta[t] - self.lr*(pred-Y[ind])*X[ind][t]
+            itr_hist.append(it)
+            cost_hist.append(self.calc_cost(X,Y,theta))
+            if it%5 == 0:
                 print("Iteration :",it,"  Cost:",self.calc_cost(X,Y,theta))
         return theta, itr_hist, cost_hist
 
@@ -50,5 +49,5 @@ class Stoc_Grad_Desc:
         plt.show()
 
 if __name__ == "__main__":
-    sgd = Stoc_Grad_Desc(0.005,1500)
+    sgd = Stoc_Grad_Desc(0.000005,50)
     sgd.get_coeff()
