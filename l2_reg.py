@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from preprocess import preprocess
-
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from math import sqrt
 class L2_Reg:
 
     def __init__(self,lr,iter,lmbd):
@@ -31,16 +33,22 @@ class L2_Reg:
         cost_hist = []
         m=len(Y)
         itr_hist = []
+        prev_cost = 0
         for it in range(self.iter):
             predictions = []
             for x in X:
                 predictions.append(np.dot(x,theta))
             for i in range(3):
                 theta[i] = theta[i] - self.lr*self.calc_gradient(X,Y,predictions,theta,i)
+            curr_cost = self.calc_cost(X,Y,theta)
             itr_hist.append(it)
-            cost_hist.append(self.calc_cost(X,Y,theta))
-            if it%5 == 0:
-                print("Iteration :",it,"  Cost:",self.calc_cost(X,Y,theta))
+            cost_hist.append(curr_cost)
+            if it%3 == 0:
+                print("Iteration :",it,"  Cost:",curr_cost)
+            if abs(curr_cost - prev_cost) < 0.0000001:
+                print("Final Cost:",curr_cost)
+                break
+            prev_cost = curr_cost
         return theta, itr_hist, cost_hist
 
     def get_coeff(self):
@@ -50,6 +58,11 @@ class L2_Reg:
         # print(X)
         ntheta, ith, coh = self.grad_desc(X,Y,theta)
         print(ntheta)
+        predictions = []
+        for x in X:
+            predictions.append(np.dot(x,ntheta))
+        print("RMSE: ",sqrt(mean_squared_error(Y, predictions)))
+        print("R2 Score: ",r2_score(Y,predictions))
         plt.plot(ith,coh)
         plt.xlabel("Iterations")
         plt.ylabel("Cost")
@@ -57,5 +70,5 @@ class L2_Reg:
         plt.show()
 
 if __name__ == "__main__":
-    l2r = L2_Reg(0.000005,50,0.1)
+    l2r = L2_Reg(0.000001,50,0.1)
     l2r.get_coeff()

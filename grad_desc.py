@@ -33,17 +33,22 @@ class Grad_Desc:
         cost_hist = []
         m=len(Y)
         itr_hist = []
+        prev_cost = 0
         for it in range(self.iter):
             predictions = []
             for x in X:
                 predictions.append(np.dot(x,theta))
             for i in range(3):
                 theta[i] = theta[i] - self.lr*self.calc_gradient(X,Y,predictions,i)
-            if it%1 == 0:
-                itr_hist.append(it)
-                cost_hist.append(self.calc_cost(X,Y,theta))
+            curr_cost = self.calc_cost(X,Y,theta)
+            itr_hist.append(it)
+            cost_hist.append(curr_cost)
             if it%3 == 0:
-                print("Iteration :",it,"  Cost:",self.calc_cost(X,Y,theta))
+                print("Iteration :",it,"  Cost:",curr_cost)
+            if abs(curr_cost - prev_cost) < 0.0000001:
+                print("Final Cost:",curr_cost)
+                break
+            prev_cost = curr_cost
         return theta, itr_hist, cost_hist
 
 
@@ -67,5 +72,5 @@ class Grad_Desc:
 
 
 if __name__ == "__main__":
-    gd = Grad_Desc(0.000005,45)
+    gd = Grad_Desc(0.000001,100)
     gd.get_coeff()
