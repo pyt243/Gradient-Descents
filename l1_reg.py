@@ -5,6 +5,8 @@ from preprocess import preprocess
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 from math import sqrt
+
+
 class L2_Reg:
 
     def __init__(self,lr,iter,lmbd):
@@ -27,7 +29,7 @@ class L2_Reg:
         for i in range(len(X)):
             gd = gd + (predictions[i] - Y[i])*X[i][index]
         gd = gd/len(X)
-        gd = (gd+self.lmbd*theta[index])
+        gd = (gd+self.lmbd*np.sign(theta[index]))
         return gd
 
     def grad_desc(self,X,Y,theta):

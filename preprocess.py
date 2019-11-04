@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 def preprocess(path):
+    np.random.seed(42)
     data = pd.read_csv(path)
     Y = data['3'].values
     y_mean = np.mean(Y)
@@ -27,6 +28,7 @@ def preprocess(path):
     sdf = data.values
     np.random.shuffle(sdf)
     data = pd.DataFrame(sdf,columns=['0','1','2','3'])
+    # print(data.values[:10])
     Y = data['3'].values
     data = data.drop(['3'],axis=1)
     X = data.values
@@ -35,4 +37,4 @@ def preprocess(path):
     X = np.array(X,dtype=np.float64)
     return X,Y,x_mean,y_mean,x_std,y_std
 
-preprocess("3D_spatial_network.csv")
+# preprocess("3D_spatial_network.csv")
