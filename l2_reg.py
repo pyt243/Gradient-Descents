@@ -13,20 +13,13 @@ class L2_Reg:
         self.lmbd = lmbd
 
     def calc_cost(self,X,Y,theta):
-        predictions = []
-        for x in X:
-            predictions.append(np.dot(x,theta))
-        cost = 0.0
-        for i in range(len(predictions)):
-            cost = cost + (predictions[i]-Y[i])**2
-        cost = cost/(2*len(Y))
+        predictions = np.dot(X,theta)
+        cost = 0.5*np.sum((predictions-Y)**2)+self.lmbd*np.sum(theta**2)
         return cost
 
     def calc_gradient(self,X,Y,predictions,theta,index):
         gd = 0.0
-        for i in range(len(X)):
-            gd = gd + (predictions[i] - Y[i])*X[i][index]
-        gd = gd/len(X)
+        gd = np.dot(predictions-Y,X[:,index])
         gd = (gd+self.lmbd*theta[index])
         return gd
 
@@ -36,9 +29,7 @@ class L2_Reg:
         itr_hist = []
         prev_cost = 0
         for it in range(self.iter):
-            predictions = []
-            for x in X:
-                predictions.append(np.dot(x,theta))
+            predictions = np.dot(X,theta)
             for i in range(3):
                 theta[i] = theta[i] - self.lr*self.calc_gradient(X,Y,predictions,theta,i)
             curr_cost = self.calc_cost(X,Y,theta)
@@ -46,30 +37,30 @@ class L2_Reg:
             cost_hist.append(curr_cost)
             if it%3 == 0:
                 print("Iteration :",it,"  Cost:",curr_cost)
-            if abs(curr_cost - prev_cost) < 0.0000001:
+            if abs(curr_cost - prev_cost) < 0.01:
                 print("Final Cost:",curr_cost)
                 break
             prev_cost = curr_cost
         return theta, itr_hist, cost_hist
 
     def get_coeff(self):
-        X,Y,x_mean,y_mean,x_std,y_std = preprocess("3D_spatial_network.csv")
+        X,Y,x_mean,y_mean,x_std,y_std,X_test,Y_test = preprocess("3D_spatial_network.csv")
         theta = np.random.rand(3)
-        print(theta)
-        # print(X)
         ntheta, ith, coh = self.grad_desc(X,Y,theta)
         print(ntheta)
-        predictions = []
-        for x in X:
-            predictions.append(np.dot(x,ntheta))
-        print("RMSE: ",sqrt(mean_squared_error(Y, predictions)))
-        print("R2 Score: ",r2_score(Y,predictions))
+        predictions = np.dot(X,ntheta)
+        print("RMSE Train: ",sqrt(mean_squared_error(Y, predictions)))
+        print("R2 Score Train: ",r2_score(Y,predictions))
+        predictions = np.dot(X_test,ntheta)
+        print("RMSE Test: ",sqrt(mean_squared_error(Y_test, predictions)))
+        print("R2 Score Test: ",r2_score(Y_test,predictions))
         plt.plot(ith,coh)
         plt.xlabel("Iterations")
         plt.ylabel("Cost")
-        plt.title("Gradient Desc")
+        plt.title("L2 Gradient Desc")
         plt.show()
+        return ntheta,X_test,Y_test
 
 if __name__ == "__main__":
-    l2r = L2_Reg(0.2,50,0.1)
-    l2r.get_coeff()
+    l2r = L2_Reg(0.000001,50,0.1)
+    ntheta,X_test,Y_test = l2r.get_coeff()

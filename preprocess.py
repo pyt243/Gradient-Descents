@@ -32,9 +32,11 @@ def preprocess(path):
     Y = data['3'].values
     data = data.drop(['3'],axis=1)
     X = data.values
+    X_test = X[:][300000:]
+    Y_test = Y[300000:]
     X = X[:][:300000]
     Y = Y[:300000]
     X = np.array(X,dtype=np.float64)
-    return X,Y,x_mean,y_mean,x_std,y_std
+    return X,Y,x_mean,y_mean,x_std,y_std,X_test,Y_test
 
 # preprocess("3D_spatial_network.csv")
